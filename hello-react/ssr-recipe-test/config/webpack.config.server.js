@@ -1,6 +1,7 @@
+// webpack-node-externals 라이브러리 import
+const nodeExternals = require('webpack-node-externals');
 const paths = require('./paths');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
-const nodeExternals = require('webpack-node-externals');
 const webpack = require('webpack');
 const getClientEnvironment = require('./env');
 
@@ -8,19 +9,21 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
-
+// 환경변수
 const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
 
 module.exports = {
-  mode: 'production',
-  entry: paths.ssrIndexJs,
-  target: 'node',
+  mode: 'production', // 프로덕션 모드로 설정하여 최적화 옵션들을 활성화
+  entry: paths.ssrIndexJs, // 엔트리 파일 경로
+  target: 'node', // node 환경에서 실행될 것이라는 점을 명시
+  // 결과물이 어떻게 나올지를 명시
   output: {
-    path: paths.ssrBuild,
-    filename: 'server.js',
-    chunkFilename: 'js/[name].chunk.js',
-    publicPath: paths.publicUrlOrPath,
+    path: paths.ssrBuild, // 빌드 경로
+    filename: 'server.js', // 파일 이름
+    chunkFilename: 'js/[name].chunk.js', // chunk file 이름
+    publicPath: paths.publicUrlOrPath, // 파일들이 위치할 서버 상의 경로 .
   },
+  //loader
   module: {
     rules: [
       {
@@ -43,6 +46,7 @@ module.exports = {
                   },
                 ],
               ],
+              // import 에 대한 플러그인
               plugins: [
                 [
                   require.resolve('babel-plugin-named-asset-import'),
@@ -61,16 +65,15 @@ module.exports = {
               compact: false,
             },
           },
-
           // CSS 를 위한 처리
           {
             test: cssRegex,
             exclude: cssModuleRegex,
-            //  exportOnlyLocals: true 옵션을 설정해야 실제 css 파일을 생성하지 않습니다.
             loader: require.resolve('css-loader'),
             options: {
               importLoaders: 1,
               modules: {
+                //  exportOnlyLocals: true 옵션을 설정해야 실제 css 파일을 생성하지 않음.
                 exportOnlyLocals: true,
               },
             },
@@ -129,12 +132,12 @@ module.exports = {
             options: {
               emitFile: false, // 파일을 따로 저장하지 않는 옵션
               limit: 10000, // 원래는 9.76KB가 넘어가면 파일로 저장하는데
-              // emitFile 값이 false 일땐 경로만 준비하고 파일은 저장하지 않습니다.
+              // emitFile 값이 false 일땐 경로만 준비하고 파일은 저장하지 않음.
               name: 'static/media/[name].[hash:8].[ext]',
             },
           },
           // 위에서 설정된 확장자를 제외한 파일들은
-          // file-loader 를 사용합니다.
+          // file-loader 를 사용.
           {
             loader: require.resolve('file-loader'),
             exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
@@ -147,15 +150,13 @@ module.exports = {
       },
     ],
   },
+  // react, react-dom/server 같은 라이브러리를 import 구문으로 불러오게 되면, node_modules 에서 찾아서 불러오기 위한 설정. 라이브러리를 불러오면 빌드할 때 결과물 파일 안에 해당 라이브러리 관련 코드가 함께 번들링.
   resolve: {
     modules: ['node_modules'],
   },
-  externals: [
-    nodeExternals({
-      allowlist: [/@babel/],
-    }),
-  ],
+  // 서버를 위해 번들링할 때는 node-modules 에서 불러오는 것을 제외하고 번들링하는 것이 좋음. 이를 위해 webpack-node-extenrnals 라이브러리 사용
+  externals: [nodeExternals()],
   plugins: [
-    new webpack.DefinePlugin(env.stringified), // 환경변수를 주입해줍니다.
+    new webpack.DefinePlugin(env.stringified), // 환경변수를 주입.
   ],
 };
