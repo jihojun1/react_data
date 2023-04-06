@@ -1,21 +1,21 @@
 {
-  "env": {
-    "browser": true, //책이랑 다름
-    "commonjs": true,
-    "es2021": true,
-    "node": true
-  },
-  "extends": ["eslint:recommended", "prettier"],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
-  "overrides": [], //책이랑 다름
-  "parserOptions": {
-    "ecmaVersion": "latest"
-  },
-  "rules": {
-    "no-unused-vars": "warn",
-    "no-console": "off"
-  }
+    "env": {
+        "commonjs": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": ["eslint:recommended","prettier"],
+    "globals": {
+        "Atomics":"readonly",
+        "SharedArrayBuffer":"readonly"
+    },
+    
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-unused-vars": "warn",
+        "no-console": "off"
+    }
 }
